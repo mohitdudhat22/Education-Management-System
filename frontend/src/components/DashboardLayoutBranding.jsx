@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { createTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleIcon from '@mui/icons-material/People';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
@@ -13,6 +15,16 @@ const NAVIGATION = [
     segment: 'dashboard',
     title: 'Dashboard',
     icon: <DashboardIcon />,
+  },
+  {
+    segment: 'courses',
+    title: 'Courses',
+    icon: <AssignmentIcon />,
+  },
+  {
+    segment: 'students',
+    title: 'Students',
+    icon: <PeopleIcon />,
   },
   {
     segment: 'orders',
@@ -38,17 +50,24 @@ const demoTheme = createTheme({
 });
 
 function DemoPageContent({ pathname }) {
+  const renderContent = () => {
+    switch (pathname) {
+      case '/dashboard':
+        return <Typography variant="h4">Welcome to the Dashboard</Typography>;
+      case '/courses':
+        return <Typography variant="h4">Manage your Courses</Typography>;
+      case '/students':
+        return <Typography variant="h4">View Student Information</Typography>;
+      case '/orders':
+        return <Typography variant="h4">Manage Orders</Typography>;
+      default:
+        return <Typography variant="h4">Page Not Found</Typography>;
+    }
+  };
+
   return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
+    <Box sx={{ p: 3 }}>
+      {renderContent()}
     </Box>
   );
 }

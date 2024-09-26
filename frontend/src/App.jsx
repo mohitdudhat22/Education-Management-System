@@ -11,11 +11,10 @@ function App() {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route element={<ProtectedRoute />}>
+      <Route>
         <Route path="/dashboard" element={<DashboardLayoutBranding />} />
       </Route>
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+  </Routes>
   );
 }
 

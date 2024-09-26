@@ -1,36 +1,38 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-import { login, register } from '../services/api';
+import apiService from '../services/api'; // Import your apiService
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUser();
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchUser = async () => {
+  const login = async (credentials) => {
+    console.log(credentials);
     try {
-      const res = await axios.get('/api/users/profile');
-      setUser(res.data);
+      const res = await apiService.login(credentials); // Call login API
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      console.log(res.data.user);
+      console.log("Login successful");
+      return true
     } catch (error) {
-      console.error('Error fetching user:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error during login:', error);
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const res = await apiService.register(userData); // Call register API
+      localStorage.setItem('token', res.data.token);
+      return true;
+    } catch (error) {
+      console.error('Error during registration:', error);
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   };
 

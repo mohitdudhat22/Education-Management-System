@@ -3,16 +3,17 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('a@gmail.com');
+  const [password, setPassword] = useState('password123');
+  const [username, setUsername] = useState('a');
+  const [role, setRole] = useState('admin');
+  const [fullName, setFullName] = useState('a');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await register({ email, password, username, role });
+    const success = await register({ email, password, username, role, fullName });
     if (success) {
       navigate('/login');
     }
@@ -36,6 +37,14 @@ const Register = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
+            required
+            className="block w-full p-4 text-neutral bg-secondary border border-secondary rounded-2xl"
+          />
+                <input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Fullname"
             required
             className="block w-full p-4 text-neutral bg-secondary border border-secondary rounded-2xl"
           />

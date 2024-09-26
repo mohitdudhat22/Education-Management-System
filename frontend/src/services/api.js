@@ -1,147 +1,56 @@
 import axios from 'axios';
-import dotenv from 'dotenv'
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+});
 
-// Load .env file in the testing or development environment
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config();
-}
-export const setAuthToken = (token) => {
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common['Authorization'];
-  }
-};
+// Add a request interceptor to include the token in all requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export const fetchCourseCompletionRates = async () => {
-  const response = await api.get('/analytics/course-completion');
-  return response.data;
-};
+const apiService = {
+  // Courses
+  fetchCourses: () => api.get('/api/courses'),
+  createCourse: (courseData) => api.post('/api/courses', courseData),
+  updateCourse: (courseId, courseData) => api.patch(`/api/courses/${courseId}`, courseData),
+  deleteCourse: (courseId) => api.delete(`/api/courses/${courseId}`),
+  enrollInCourse: (courseId) => api.post(`/api/courses/${courseId}/enroll`),
+  getEnrolledStudents: (courseId) => api.get(`/api/courses/${courseId}/students`),
 
-export const fetchAverageGrades = async () => {
-  const response = await api.get('/analytics/average-grades');
-  return response.data;
-};
+  // Assignments
+  fetchAssignments: () => api.get('/api/assignments'),
+  createAssignment: (assignmentData) => api.post('/api/assignments', assignmentData),
+  updateAssignment: (assignmentId, assignmentData) => api.patch(`/api/assignments/${assignmentId}`, assignmentData),
+  deleteAssignment: (assignmentId) => api.delete(`/api/assignments/${assignmentId}`),
+  getAssignmentsForCourse: (courseId) => api.get(`/api/assignments/course/${courseId}`),
 
-export const fetchStudentsPerTeacher = async () => {
-  const response = await api.get('/analytics/students-per-teacher');
-  return response.data;
-};
-export const login = async (email, password) => {
-  try {
-    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, { email, password });
-    localStorage.setItem('token', res.data.token);
-    setAuthToken(res.data.token);
-    return true;
-  } catch (error) {
-    console.error('Login error:', error);
-    return false;
-  }
-};
+  // Submissions
+  fetchSubmissions: () => api.get('/api/submissions'),
+  submitAssignment: (submissionData) => api.post('/api/submissions', submissionData),
+  gradeSubmission: (submissionId, gradeData) => api.patch(`/api/submissions/${submissionId}/grade`, gradeData),
+  getSubmissionsForAssignment: (assignmentId) => api.get(`/api/submissions/assignment/${assignmentId}`),
+  getSubmissionsForStudent: (studentId) => api.get(`/api/submissions/student/${studentId}`),
 
-export const register = async ({ email, password, username, role }) => {
-  try {
-    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`, { email, password, username, role });
-    localStorage.setItem('token', res.data.token);
-    setAuthToken(res.data.token);
-    return true;
-  } catch (error) {
-    console.error('Registration error:', error);
-    return false;
-  }
-};
+  // Analytics
+  getCourseCompletionRates: () => api.get('/api/analytics/course-completion'),
+  getAverageGradesPerCourse: () => api.get('/api/analytics/average-grades'),
+  getStudentsPerTeacher: () => api.get('/api/analytics/students-per-teacher'),
+  getAssignmentSubmissionRate: () => api.get('/api/analytics/assignment-submission-rate'),
+  getTopPerformingStudents: () => api.get('/api/analytics/top-students'),
+  getCoursePopularity: () => api.get('/api/analytics/course-popularity'),
 
-export const getUserProfile = async () => {
-  const token = localStorage.getItem('token');
-  setAuthToken(token);
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/users/profile`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    throw error;
-  }
+  //Auth
+  login: (credentials) => api.post('/api/auth/login', credentials),
+  register: (userData) => api.post('/api/auth/register', userData),
+  fetchUserProfile: () => api.get('/api/users/profile'),
 };
 
-export const createExpense = async (expenseData) => {
-  console.log(expenseData);
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/expenses`, expenseData);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating expense:', error);
-    throw error;
-  }
-};
-
-export const getExpenses = async (queryParams) => {
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/expenses`, { params: queryParams });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching expenses:', error);
-    throw error;
-  }
-};
-
-export const updateExpense = async (id, expenseData) => {
-  try {
-    const response = await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/${id}`, {...expenseData, amount: parseFloat(expenseData.amount)});
-    console.log('Update response:', response.data); 
-    return response.data;
-  } catch (error) {
-    console.error('Error updating expense:', error);
-    throw error;
-  }
-};
-
-export const deleteExpenses = async (ids) => {
-  try {
-    const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/expenses`, {
-      data: { ids }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting expenses:', error);
-    throw error;
-  }
-};
-export const deleteOneExpenses = async (id) => {
-  try {
-    const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting expenses:', error);
-    throw error;
-  }
-};
-export const bulkUploadExpenses = async (expensesData) => {
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/bulk`, expensesData);
-    return response.data;
-  } catch (error) {
-    console.error('Error uploading expenses:', error);
-    throw error;
-  }
-};
-
-export const getMonthlyStats = async () => {
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/stats/monthly`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching monthly stats:', error);
-    throw error;
-  }
-};
-
-export const getCategoryStats = async () => {
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/expenses/stats/category`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching category stats:', error);
-    throw error;
-  }
-};
+export default apiService;
