@@ -1,8 +1,8 @@
 import express from 'express';
-import Course from '../models/Course.js';
-import Submission from '../models/Submission.js';
-import Assignment from '../models/Assignment.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import Course from '../models/courseModel.js';
+import Submission from '../models/submissionModel.js';
+import Assignment from '../models/assignmentModel.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

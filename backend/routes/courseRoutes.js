@@ -1,11 +1,14 @@
 import express from 'express';
-import Course from '../models/Course.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import Course from '../models/courseModel.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import pkg from 'winston';
+const { log } = pkg;
 const router = express.Router();
 
 // Create a new course (Admin only)
 router.post('/', authMiddleware, async (req, res) => {
   try {
+    console.log(req.user.role)
     if (req.user.role !== 'admin') {
       return res.status(403).send({ error: 'Only admins can create courses' });
     }
@@ -46,16 +49,18 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // Update a course (Admin only)
 router.patch('/:id', authMiddleware, async (req, res) => {
   try {
+    console.log(req.user.role)
     if (req.user.role !== 'admin') {
       return res.status(403).send({ error: 'Only admins can update courses' });
     }
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {new : true});
+    await course.save();
     if (!course) {
       return res.status(404).send({ error: 'Course not found' });
     }
-    res.send(course);
+    res.send({course, message: 'Course updated successfully'});
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send({error: error.message});
   }
 });
 

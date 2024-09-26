@@ -8,5 +8,5 @@ const courseSchema = new mongoose.Schema({
     students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   });
 
-randomSchema.plugin(mongooseAggregatePaginate);
+courseSchema.plugin(mongooseAggregatePaginate);
 export default mongoose.model("Course", courseSchema);

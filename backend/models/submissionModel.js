@@ -8,4 +8,4 @@ const submissionSchema = new mongoose.Schema({
   feedback: { type: String },
 });
 
-module.exports = mongoose.model('Submission', submissionSchema);
+export default mongoose.model('Submission', submissionSchema);

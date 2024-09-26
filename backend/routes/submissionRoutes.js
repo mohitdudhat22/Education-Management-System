@@ -1,8 +1,8 @@
 import express from 'express';
-import Submission from '../models/Submission.js';
-import Assignment from '../models/Assignment.js';
-import Course from '../models/Course.js';
-import authMiddleware from '../middleware/auth.js';
+import Assignment from '../models/assignmentModel.js';
+import Course from '../models/courseModel.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import Submission from '../models/submissionModel.js';
 const router = express.Router();
 
 // Submit an assignment (Student only)
@@ -52,15 +52,17 @@ router.get('/:id', authMiddleware, async (req, res) => {
     const submission = await Submission.findById(req.params.id)
       .populate('assignment', 'title')
       .populate('student', 'name');
+      console.log(submission, "<><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< submission");
+      console.log(req.user, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< user");
     if (!submission) {
       return res.status(404).send({ error: 'Submission not found' });
     }
-    if (req.user.role === 'student' && submission.student.toString() !== req.user._id.toString()) {
+    if (req.user.role === 'student' && submission.student._id.toString() !== req.user._id.toString()) {
       return res.status(403).send({ error: 'You can only view your own submissions' });
     }
-    res.send(submission);
+    res.send({submission});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error: error.message});
   }
 });
 

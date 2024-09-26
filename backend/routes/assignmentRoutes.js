@@ -1,7 +1,7 @@
 import express from 'express';
-import Course from '../models/Course.js';
-import Assignment from '../models/Assignment.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import Course from '../models/courseModel.js';
+import Assignment from '../models/assignmentModel.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 // Create a new assignment (Teacher only)
@@ -69,7 +69,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
     await assignment.save();
     res.send(assignment);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send({error: error.message});
   }
 });
 
@@ -98,9 +98,9 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 router.get('/course/:courseId', authMiddleware, async (req, res) => {
   try {
     const assignments = await Assignment.find({ course: req.params.courseId }).populate('course', 'title');
-    res.send(assignments);
+    res.send({assignments});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error: error.message});
   }
 });
 
