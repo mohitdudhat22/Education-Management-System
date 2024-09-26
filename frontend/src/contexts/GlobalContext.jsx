@@ -11,6 +11,7 @@ export const GlobalProvider = ({ children }) => {
   const fetchCourses = async () => {
     try {
       const response = await apiService.fetchCourses();
+      console.log("fetched the api")
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -32,7 +33,7 @@ export const GlobalProvider = ({ children }) => {
   const updateCourse = async (courseId, courseData) => {
     try {
       const response = await apiService.updateCourse(courseId, courseData);
-      setCourses(courses.map(course => course._id === courseId ? response.data : course));
+      await fetchCourses();
       return response.data;
     } catch (error) {
       console.error('Error updating course:', error);

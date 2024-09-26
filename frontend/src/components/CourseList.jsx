@@ -1,20 +1,53 @@
-import { useGlobal } from '../context/GlobalContext';
-import { useEffect } from 'react';
-const CourseList = () => {
-  const { courses, fetchCourses } = useGlobal();
+import React from 'react';
+import { useGlobal } from '../contexts/GlobalContext';
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+const CourseList = ({handleEdit, handleDelete}) => {
+  const { courses, getEnrolledStudents } = useGlobal();
 
   return (
-    <div>
-      <h1>Courses</h1>
-      <ul>
-        {courses.map(course => (
-          <li key={course._id}>{course.name}</li>
-        ))}
-      </ul>
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="py-2 px-4 border-b">Course Name</th>
+            <th className="py-2 px-4 border-b">Description</th>
+            <th className="py-2 px-4 border-b">Teacher ID</th>
+            <th className="py-2 px-4 border-b">Enrolled Students</th>
+            <th className="py-2 px-4 border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {courses.map((course) => (
+            <tr key={course._id} className="border-b">
+              <td className="py-2 px-4">{course.title}</td>
+              <td className="py-2 px-4">{course.description}</td>
+              <td className="py-2 px-4">{course.teacher._id}</td>
+              <td className="py-2 px-4">
+                <button
+                  className="text-blue-500 hover:underline"
+                  onClick={() => getEnrolledStudents(course._id)}
+                >
+                  {course.students.length} Students
+                </button>
+              </td>
+              <td className="py-2 px-4">
+                <button
+                  className="text-yellow-500 hover:underline mr-2"
+                  onClick={() => handleEdit(course)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-red-500 hover:underline"
+                  onClick={() => handleDelete(course._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
