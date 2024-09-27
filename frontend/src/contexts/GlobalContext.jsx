@@ -75,6 +75,7 @@ export const GlobalProvider = ({ children }) => {
   const fetchAssignments = async () => {
     try {
       const response = await apiService.fetchAssignments();
+      console.log(response.data);
       setAssignments(response.data);
     } catch (error) {
       console.error('Error fetching assignments:', error);
@@ -85,6 +86,7 @@ export const GlobalProvider = ({ children }) => {
   const createAssignment = async (assignmentData) => {
     try {
       const response = await apiService.createAssignment(assignmentData);
+      console.log(response.data);
       setAssignments([...assignments, response.data]);
       return response.data;
     } catch (error) {
@@ -105,6 +107,7 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const deleteAssignment = async (assignmentId) => {
+    console.log("inside delete")
     try {
       await apiService.deleteAssignment(assignmentId);
       setAssignments(assignments.filter(assignment => assignment._id !== assignmentId));
@@ -158,6 +161,7 @@ export const GlobalProvider = ({ children }) => {
   const getSubmissionsForAssignment = async (assignmentId) => {
     try {
       const response = await apiService.getSubmissionsForAssignment(assignmentId);
+      setSubmissions(response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching submissions for assignment:', error);

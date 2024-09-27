@@ -11,6 +11,7 @@ router.post('/', authMiddleware, async (req, res) => {
     if (req.user.role !== 'student') {
       return res.status(403).send({ error: 'Only students can submit assignments' });
     }
+    console.log(req.body);
     const assignment = await Assignment.findById(req.body.assignmentId);
     if (!assignment) {
       return res.status(404).send({ error: 'Assignment not found' });

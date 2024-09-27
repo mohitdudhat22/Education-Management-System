@@ -11,6 +11,7 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(403).send({ error: 'Only teachers can create assignments' });
     }
     const course = await Course.findById(req.body.courseId);
+    console.log(course);
     if (!course) {
       return res.status(404).send({ error: 'Course not found' });
     }
@@ -87,10 +88,10 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     if (course.teacher.toString() !== req.user._id.toString()) {
       return res.status(403).send({ error: 'You can only delete assignments for courses you teach' });
     }
-    await assignment.remove();
-    res.send(assignment);
+    const deletedAssignment = await Assignment.deleteOne({ _id: req.params.id });
+    res.send({deletedAssignment , message: 'Assignment deleted successfully'});
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({error: error.message});
   }
 });
 

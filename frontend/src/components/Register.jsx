@@ -64,8 +64,9 @@ const Register = () => {
               className="block w-full p-4 text-neutral bg-secondary border border-secondary rounded-2xl appearance-none"
             >
               <option value="">Select Role</option>
-              <option value="user">User</option>
+              <option value="student">Student</option>
               <option value="admin">Admin</option>
+              <option value="teacher">Teacher</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral">
               <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

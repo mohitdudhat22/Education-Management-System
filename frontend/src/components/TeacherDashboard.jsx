@@ -15,7 +15,7 @@ const TeacherDashboard = () => {
     if (courseId) {
       getAssignmentsForCourse(courseId);
     }
-  }, [courseId, fetchCourses, getAssignmentsForCourse]);
+  }, []);
 
   return (
     <div>
