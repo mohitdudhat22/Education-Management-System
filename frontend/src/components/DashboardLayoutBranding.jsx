@@ -9,6 +9,9 @@ import PeopleIcon from '@mui/icons-material/People';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import AdminCourseManagement from './AdminCourseManangement';
+import TeacherDashboard from './TeacherDashboard';
+import StudentCourseDetail from './StudentCourseDetail';
 
 const NAVIGATION = [
   {
@@ -31,6 +34,21 @@ const NAVIGATION = [
     title: 'Orders',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'admin',
+    title: 'Admin',
+    icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: 'students',
+    title: 'students',
+    icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: 'Teacher',
+    title: 'Teacher',
+    icon: <ShoppingCartIcon />,
+  }
 ];
 
 const demoTheme = createTheme({
@@ -56,10 +74,14 @@ function DemoPageContent({ pathname }) {
         return <Typography variant="h4">Welcome to the Dashboard</Typography>;
       case '/courses':
         return <Typography variant="h4">Manage your Courses</Typography>;
-      case '/students':
-        return <Typography variant="h4">View Student Information</Typography>;
       case '/orders':
         return <Typography variant="h4">Manage Orders</Typography>;
+      case '/admin':
+        return <AdminCourseManagement/>
+      case '/teachers':
+        return <TeacherDashboard/>
+      case '/students':
+        return <StudentCourseDetail/>
       default:
         return <Typography variant="h4">Page Not Found</Typography>;
     }

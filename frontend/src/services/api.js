@@ -24,6 +24,7 @@ const apiService = {
   deleteCourse: (courseId) => api.delete(`/api/courses/${courseId}`),
   enrollInCourse: (courseId) => api.post(`/api/courses/${courseId}/enroll`),
   getEnrolledStudents: (courseId) => api.get(`/api/courses/${courseId}/students`),
+  getAllTeachers: () => api.get(`/api/courses/getAllTeachers`),
 
   // Assignments
   fetchAssignments: () => api.get('/api/assignments'),

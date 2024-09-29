@@ -30,4 +30,6 @@ const StudentCourseDetail = () => {
       </div>
     );
   };
+
+export default StudentCourseDetail;
   

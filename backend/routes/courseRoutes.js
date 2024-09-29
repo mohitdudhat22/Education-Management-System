@@ -1,6 +1,7 @@
 import express from 'express';
 import Course from '../models/courseModel.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
+import userModel from '../models/userModel.js';
 import pkg from 'winston';
 const { log } = pkg;
 const router = express.Router();
@@ -32,6 +33,15 @@ router.get('/', authMiddleware, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+router.get('/getAllTeachers', async (req, res) => {
+  try {
+    const teachers = await userModel.find({ role: 'teacher' })
+    res.send(teachers)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 
 // Get a specific course
 router.get('/:id', authMiddleware, async (req, res) => {

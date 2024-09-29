@@ -7,7 +7,19 @@ export const GlobalProvider = ({ children }) => {
   const [assignments, setAssignments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [analyticsData, setAnalyticsData] = useState({});
-    
+  const [teacherData, setTeacherData] = useState([]);
+
+  const getAllTeachers = async() => {
+    try {
+      const response = await apiService.getAllTeachers();
+      console.log(response.data)
+      setTeacherData(response.data)
+      return response;
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      throw error;
+    }
+  }
   const fetchCourses = async () => {
     try {
       const response = await apiService.fetchCourses();
@@ -270,8 +282,9 @@ export const GlobalProvider = ({ children }) => {
       fetchStudentsPerTeacher,
       fetchAssignmentSubmissionRate,
       fetchTopPerformingStudents,
-      fetchCoursePopularity
-
+      fetchCoursePopularity,
+      getAllTeachers,
+      teacherData
     }}>
       {children}
     </GlobalContext.Provider>

@@ -9,7 +9,6 @@ const CourseList = ({ handleEdit, handleDelete }) => {
   const handleCourseClick = (id) => {
     navigate(`/teacher/${id}`); // Navigate to the course page
   };
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
