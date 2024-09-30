@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobal } from '../contexts/GlobalContext';
-import { Grid, Typography, TextField, Button, Card, CardContent, MenuItem } from '@material-ui/core';
+import { 
+  Box, 
+  Typography, 
+  TextField, 
+  Button, 
+  Card, 
+  CardContent, 
+  Grid, 
+  useTheme, 
+  MenuItem 
+} from '@mui/material';
 import { motion } from 'framer-motion';
-import CourseList from './CourseList';
 
 const AdminCourseManagement = () => {
-  const {
-    fetchCourses,
-    createCourse,
-    updateCourse,
-    deleteCourse,
-    getAllTeachers,
-    teacherData
+  const theme = useTheme();
+  const { 
+    fetchCourses, 
+    createCourse, 
+    updateCourse, 
+    deleteCourse, 
+    getAllTeachers, 
+    teacherData,
+    courses 
   } = useGlobal();
 
   const [courseData, setCourseData] = useState({ title: '', description: '', teacherId: '' });
@@ -55,73 +66,102 @@ const AdminCourseManagement = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Typography variant="h2" component="h2" gutterBottom>
-            Course Management
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Course Title"
-                      value={courseData.title}
-                      onChange={(e) => setCourseData({ ...courseData, title: e.target.value })}
-                      required
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Course Description"
-                      value={courseData.description}
-                      onChange={(e) => setCourseData({ ...courseData, description: e.target.value })}
-                      required
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      select
-                      label="Select Teacher"
-                      value={courseData.teacherId}
-                      onChange={(e) => setCourseData({ ...courseData, teacherId: e.target.value })}
-                      required
-                      fullWidth
-                    >
-                      {teacherData.map((teacher) => (
-                        <MenuItem key={teacher._id} value={teacher._id}>
-                          {teacher.fullName}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disableElevation
-                    >
-                      {editMode ? 'Update Course' : 'Create Course'}
-                    </Button>
-                  </Grid>
+      <Box sx={{ p: 3, bgcolor: theme.palette.background.default, color: theme.palette.text.primary }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Course Management
+        </Typography>
+        <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Course Title"
+                    value={courseData.title}
+                    onChange={(e) => setCourseData({ ...courseData, title: e.target.value })}
+                    required
+                    fullWidth
+                  />
                 </Grid>
-              </form>
-            </CardContent>
-          </Card>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    select
+                    label="Select Teacher"
+                    value={courseData.teacherId}
+                    onChange={(e) => setCourseData({ ...courseData, teacherId: e.target.value })}
+                    required
+                    fullWidth
+                  >
+                    {teacherData.map((teacher) => (
+                      <MenuItem key={teacher._id} value={teacher._id}>
+                        {teacher.fullName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Course Description"
+                    value={courseData.description}
+                    onChange={(e) => setCourseData({ ...courseData, description: e.target.value })}
+                    required
+                    fullWidth
+                    multiline
+                    rows={4}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    {editMode ? 'Update Course' : 'Create Course'}
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
+          Existing Courses
+        </Typography>
+        <Grid container spacing={2}>
+          {courses.map((course) => (
+            <Grid item xs={12} sm={6} md={4} key={course._id}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" component="h3" gutterBottom>
+                      {course.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" paragraph>
+                      {course.description}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Teacher: {course.teacher.fullName}
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Button onClick={() => handleEdit(course)} color="primary" sx={{ mr: 1 }}>
+                        Edit
+                      </Button>
+                      <Button onClick={() => handleDelete(course._id)} color="error">
+                        Delete
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))}
         </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h3" component="h3" gutterBottom>
-            Existing Courses
-          </Typography>
-          <CourseList handleEdit={handleEdit} handleDelete={handleDelete} />
-        </Grid>
-      </Grid>
+      </Box>
     </motion.div>
   );
 };

@@ -45,7 +45,7 @@ const NAVIGATION = [
     icon: <ShoppingCartIcon />,
   },
   {
-    segment: 'Teacher',
+    segment: 'teacher',
     title: 'Teacher',
     icon: <ShoppingCartIcon />,
   }
@@ -78,7 +78,7 @@ function DemoPageContent({ pathname }) {
         return <Typography variant="h4">Manage Orders</Typography>;
       case '/admin':
         return <AdminCourseManagement/>
-      case '/teachers':
+      case '/teacher':
         return <TeacherDashboard/>
       case '/students':
         return <StudentCourseDetail/>

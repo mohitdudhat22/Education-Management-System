@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobal } from '../contexts/GlobalContext';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { 
+  Box, Typography, TextField, Button, Select, MenuItem, 
+  List, ListItem, ListItemText, IconButton, useTheme 
+} from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
 
 const AssignmentList = () => {
+  const theme = useTheme();
   const { courseId } = useParams();
   const { courses, createAssignment, deleteAssignment, updateAssignment, fetchAssignments, fetchCourses, assignments } = useGlobal();
-  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     dueDate: '',
     courseId: courseId,
   });
-
   const [initialData, setInitialData] = useState(null);
   const navigate = useNavigate();
 
@@ -65,105 +70,95 @@ const AssignmentList = () => {
   };
 
   return (
-    <div>
-      <h1>Manage Assignments for Course ID: {courseId}</h1>
-      
-      <form onSubmit={handleFormSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-            Title
-          </label>
-          <input
-            type="text"
+    <Box sx={{ p: 3, bgcolor: 'background.default', color: 'text.primary' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <Typography variant="h4" gutterBottom>
+          Manage Assignments for Course ID: {courseId}
+        </Typography>
+        
+        <Box component="form" onSubmit={handleFormSubmit} sx={{ '& > :not(style)': { m: 1, width: '100%' } }}>
+          <TextField
+            label="Title"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
+            fullWidth
           />
-        </div>
-
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <textarea
+          <TextField
+            label="Description"
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            multiline
+            rows={4}
             required
+            fullWidth
           />
-        </div>
-
-        <div>
-          <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
-            Due Date
-          </label>
-          <input
-            type="datetime-local"
+          <TextField
+            label="Due Date"
             name="dueDate"
+            type="datetime-local"
             value={formData.dueDate}
             onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
-        </div>
-
-        <div>
-          <label htmlFor="courseId" className="block text-sm font-medium text-gray-700">
-            Course
-          </label>
-          <select
+          <Select
+            label="Course"
             name="courseId"
             value={formData.courseId}
             onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
+            fullWidth
           >
-            <option value="">Select a course</option>
+            <MenuItem value="">
+              <em>Select a course</em>
+            </MenuItem>
             {courses.map((course) => (
-              <option key={course._id} value={course._id}>
+              <MenuItem key={course._id} value={course._id}>
                 {course.title}
-              </option>
+              </MenuItem>
             ))}
-          </select>
-        </div>
+          </Select>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            {initialData ? 'Update Assignment' : 'Create Assignment'}
+          </Button>
+        </Box>
 
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">
-          {initialData ? 'Update Assignment' : 'Create Assignment'}
-        </button>
-      </form>
-
-      <h2 className="mt-6">Existing Assignments</h2>
-      <ul>
-        {assignments.map((assignment) => (
-          <li key={assignment._id} className="flex justify-between items-center border-b py-2">
-            <span>{assignment.title}</span>
-            <div>
-              <button 
-                onClick={() => handleEdit(assignment)} 
-                className="text-yellow-500 hover:underline mr-2"
-              >
-                Edit
-              </button>
-              <button 
-                onClick={() => handleDelete(assignment._id)} 
-                className="text-red-500 hover:underline"
-              >
-                Delete
-              </button>
-              <button 
-                onClick={() => navigate(`/assignments/submissions/${assignment._id}`)}
-                className="text-blue-500 hover:underline ml-2"
-              >
-                View
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
+          Existing Assignments
+        </Typography>
+        <List>
+          {assignments.map((assignment) => (
+            <ListItem
+              key={assignment._id}
+              secondaryAction={
+                <Box>
+                  <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(assignment)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(assignment._id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="view" onClick={() => navigate(`/assignments/submissions/${assignment._id}`)}>
+                    <VisibilityIcon />
+                  </IconButton>
+                </Box>
+              }
+            >
+              <ListItemText
+                primary={assignment.title}
+                secondary={`Due: ${new Date(assignment.dueDate).toLocaleString()}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </motion.div>
+    </Box>
   );
 };
 

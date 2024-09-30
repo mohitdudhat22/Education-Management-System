@@ -39,6 +39,16 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+// Get assignments for a specific course
+router.get('/course/:courseId', authMiddleware, async (req, res) => {
+  try {
+    const assignments = await Assignment.find({ course: req.params.courseId }).populate('course', 'title');
+    res.send({assignments});
+  } catch (error) {
+    res.status(500).send({error: error.message});
+  }
+});
+
 // Get a specific assignment
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
@@ -95,14 +105,6 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Get assignments for a specific course
-router.get('/course/:courseId', authMiddleware, async (req, res) => {
-  try {
-    const assignments = await Assignment.find({ course: req.params.courseId }).populate('course', 'title');
-    res.send({assignments});
-  } catch (error) {
-    res.status(500).send({error: error.message});
-  }
-});
+
 
 export default router;
